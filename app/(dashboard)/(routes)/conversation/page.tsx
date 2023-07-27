@@ -106,7 +106,9 @@ const ConversationPage = () => {
               <Loader />
             </div>
           )}
-          {messages.length === 0 && !isLoading && <Empty label={"Start a new conversation"}/>}
+          {messages.length === 0 && !isLoading && (
+            <Empty label={"Start a new conversation"} />
+          )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message) => (
               <div key={message.content}>{message.content}</div>
