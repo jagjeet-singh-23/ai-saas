@@ -3,15 +3,17 @@
 import * as z from "zod";
 import axios from "axios";
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ImageIcon } from "lucide-react";
+import { Download, ImageIcon } from "lucide-react";
 
 import { Heading } from "@/components/heading";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Card, CardFooter } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -169,7 +171,25 @@ const ImagePage = () => {
           {images.length === 0 && !isLoading && (
             <Empty label={"No image generated yet."} />
           )}
-          <div>Images will be rendered here</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
+            {images.map((src) => (
+              <Card key={src} className="rounded-lg overflow-hidden">
+                <div className="relative aspect-square">
+                  <Image alt="image" fill src={src} />
+                </div>
+                <CardFooter className="p-2">
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => window.open(src)}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </div>
