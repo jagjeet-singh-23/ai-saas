@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Music } from "lucide-react";
+import { VideoIcon } from "lucide-react";
 
 import { formSchema } from "./constants";
 import { Heading } from "@/components/heading";
@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/Empty";
 import Loader from "@/components/Loader";
 
-const MusicPage = () => {
+const VideoPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -25,14 +25,14 @@ const MusicPage = () => {
   });
 
   const router = useRouter();
-  const [music, setMusic] = useState<string>();
+  const [videos, setVideos] = useState<string>();
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      setMusic(undefined);
-      const response = await axios.post("/api/music", values);
-      setMusic(response.data.audio);
+    try {      
+      setVideos(undefined);
+      const response = await axios.post("/api/video", values);
+      setVideos(response.data[0]);
       form.reset();
     } catch (error: any) {
       // TODO: Open Pro Modal
@@ -45,11 +45,11 @@ const MusicPage = () => {
   return (
     <div>
       <Heading
-        title="Music Generation"
-        description="Use your prompts to music"
-        icon={Music}
-        iconColor="text-emerald-500"
-        bgColor="bg-emerald-500/10"
+        title="Video Generation"
+        description="Generate videos from your prompts"
+        icon={VideoIcon}
+        iconColor="text-orange-700"
+        bgColor="bg-orange-700/10"
       />
       <div className="px-4 lg:px-8">
         <div>
@@ -77,7 +77,7 @@ const MusicPage = () => {
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                         disabled={isLoading}
-                        placeholder="Diljit Dosanjh's 'Lover' song using piano."
+                        placeholder="Trinity Bomb test during World War 2"
                         {...field}
                       />
                     </FormControl>
@@ -99,11 +99,13 @@ const MusicPage = () => {
               <Loader />
             </div>
           )}
-          {!music && !isLoading && <Empty label={"Create a new music."} />}
-          {music && (
-            <audio className="w-full mt-8" controls>
-              <source src={music} />
-            </audio>
+          {!videos && !isLoading && (
+            <Empty label={"Create a new video"} />
+          )}
+          {videos && (
+            <video className="w-full mt-8 aspect-video rounded-lg border bg-black" controls>
+              <source src={videos} />
+            </video>
           )}
         </div>
       </div>
@@ -111,4 +113,4 @@ const MusicPage = () => {
   );
 };
 
-export default MusicPage;
+export default VideoPage;
