@@ -26,7 +26,6 @@ import { formSchema, amountOptions, resolution } from "./constants";
 
 import { Empty } from "@/components/Empty";
 import Loader from "@/components/Loader";
-import { cn } from "@/lib/utils";
 
 const ImagePage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
