@@ -38,12 +38,12 @@ export async function GET() {
       line_items: [
         {
           price_data: {
-            currency: "USD",
+            currency: "INR",
             product_data: {
               name: "Genius Pro",
               description: "Get unlimited AI generations",
             },
-            unit_amount: 2000,
+            unit_amount: 20000,
             recurring: {
               interval: "month",
             },
