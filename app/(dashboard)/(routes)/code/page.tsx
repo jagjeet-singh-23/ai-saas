@@ -20,8 +20,10 @@ import { Empty } from "@/components/Empty";
 import Loader from "@/components/Loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const CodePage = () => {
+  const proModal = useProModal();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,8 +48,9 @@ const CodePage = () => {
       setMessages((current) => [...current, userMessage, response.data]);
       form.reset();
     } catch (error: any) {
-      // TODO: Open Pro Modal
-      console.log(error);
+      if (error?.response?.status == 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
@@ -133,7 +136,7 @@ const CodePage = () => {
                       </div>
                     ),
                     code: ({ node, ...props }) => (
-                      <code className="bg-black/10 rounded-lg p-1" {...props}/>
+                      <code className="bg-black/10 rounded-lg p-1" {...props} />
                     ),
                   }}
                   className="text-sm overflow-hidden leading-7"

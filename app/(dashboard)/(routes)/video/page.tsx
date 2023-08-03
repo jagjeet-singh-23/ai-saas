@@ -15,8 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Empty } from "@/components/Empty";
 import Loader from "@/components/Loader";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 const VideoPage = () => {
+  const proModal = useProModal();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,14 +31,15 @@ const VideoPage = () => {
   const isLoading = form.formState.isSubmitting;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {      
+    try {
       setVideos(undefined);
       const response = await axios.post("/api/video", values);
       setVideos(response.data[0]);
       form.reset();
     } catch (error: any) {
-      // TODO: Open Pro Modal
-      console.log(error);
+      if (error?.response?.status == 403) {
+        proModal.onOpen();
+      }
     } finally {
       router.refresh();
     }
@@ -99,11 +102,12 @@ const VideoPage = () => {
               <Loader />
             </div>
           )}
-          {!videos && !isLoading && (
-            <Empty label={"Create a new video"} />
-          )}
+          {!videos && !isLoading && <Empty label={"Create a new video"} />}
           {videos && (
-            <video className="w-full mt-8 aspect-video rounded-lg border bg-black" controls>
+            <video
+              className="w-full mt-8 aspect-video rounded-lg border bg-black"
+              controls
+            >
               <source src={videos} />
             </video>
           )}
