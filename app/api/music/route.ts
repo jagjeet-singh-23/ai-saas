@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import Replicate from "replicate";
 import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
+import { checkSubscription } from "@/lib/subscription";
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_AI_API_KEY!,
@@ -21,7 +22,9 @@ export async function POST(req: Request) {
       return new NextResponse("Prompts are required", { status: 400 });
     }
     const freeTrail = await checkApiLimit();
-    if (!freeTrail) {
+    const isPro = await checkSubscription();
+
+    if (!freeTrail && !isPro) {
       return new NextResponse("Free trail is expired", { status: 403 });
     }
     const response = await replicate.run(
@@ -32,7 +35,10 @@ export async function POST(req: Request) {
         },
       }
     );
-    await increaseApiLimit();
+    
+    if (!isPro) {
+      await increaseApiLimit();
+    }
 
     return NextResponse.json(response);
   } catch (error) {
